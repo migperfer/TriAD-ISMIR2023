@@ -47,7 +47,7 @@ def config():
     resume_iteration = None
     checkpoint_interval = 1000
     train_on = 'MAESTRO'
-    model = "HPPNet"
+    model = "HPPNetDDD"
     preload_dataset = True
 
     batch_size = 1
