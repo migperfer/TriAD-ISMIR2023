@@ -1,0 +1,17 @@
+matplotlib>=3.0.0
+nnAudio>=0.3.2
+scipy>=1.1.0
+torch>=1.10.0
+torchaudio>=0.10.0
+torchmetrics==0.10.1
+SoundFile>=0.10.2
+sacred>=0.8.3
+librosa>=0.6.2
+numpy>=1.20.0<1.24
+tqdm>=4.64.1
+git+https://github.com/craffel/mir_eval.git
+mido>=1.2.9
+Pillow>=6.2.0
+tensorboard>=2.10
+pandas>=1.2
+scikit-learn>=1.0
