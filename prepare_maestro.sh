@@ -1,7 +1,7 @@
 #! /bin/bash
 # set -e
 
-USAGE="Usage: $0 -s <path/to/where/the/data/will/be/stored> [-f <path/to/existing/MAESTRO/dir/]"
+USAGE="Usage: $0 -s <path/to/where/the/data/will/be/stored> [-m <path/to/existing/MAESTRO/dir/]"
 
 # Check the arguments
 download_dataset="True"

@@ -1,22 +1,20 @@
-# PyTorch Implementation of Onsets and Frames
+# PyTorch code for _TriAD_: Capturing harmonics with 3D convolutions
 
-This is a [PyTorch](https://pytorch.org/) implementation of Google's [Onsets and Frames](https://magenta.tensorflow.org/onsets-frames) model, using the [Maestro dataset](https://magenta.tensorflow.org/datasets/maestro) for training and the Disklavier portion of the [MAPS database](http://www.tsi.telecom-paristech.fr/aao/en/2010/07/08/maps-database-a-piano-database-for-multipitch-estimation-and-automatic-transcription-of-music/) for testing.
-
-## Instructions
-
-This project is quite resource-intensive; 32 GB or larger system memory and 8 GB or larger GPU memory is recommended. 
+This is the code accompayning **TriAD: Capturing harmonics with 3D convolutions**. 
+It is mostly based on Jong Wook's [repository](https://github.com/jongwook/onsets-and-frames).
 
 ### Downloading Dataset
+You need to get two datasets: Maestro and Maps. Maestro is hosted in Google's servers, and you can download it and
+parse it using the `prepare_maestro.sh` script.
+When calling the script, use `-s` to indicate where will be Maestro downloaded; a symbolic link `data/MAESTRO` will be
+created pointing at the location where maestro was downloaded & unzipped. 
+It will also take care resampling and encoding the files as FLAC.
 
-The `data` subdirectory already contains the MAPS database. To download the Maestro dataset, first make sure that you have `ffmpeg` executable and run `prepare_maestro.sh` script:
+In case you have Maestro already in your computer, you can just use the bash script in Jong Wook's 
+[repository](https://github.com/jongwook/onsets-and-frames).
 
-```bash
-ffmpeg -version
-cd data
-./prepare_maestro.sh
-```
-
-This will download the full Maestro dataset from Google's server and automatically unzip and encode them as FLAC files in order to save storage. However, you'll still need about 200 GB of space for intermediate storage.
+To obtain the MAPS dataset just download it from Jong Wook's 
+[repository](https://github.com/jongwook/onsets-and-frames), and place it in data/MAPS
 
 ### Training
 
@@ -40,36 +38,30 @@ Trained models will be saved in the specified `logdir`, otherwise at a timestamp
 To evaluate the trained model using the MAPS database, run the following command to calculate the note and frame metrics:
 
 ```bash
-python evaluate.py runs/model/model-100000.pt
+python evaluate.py <path/to/your/saved/model>
 ```
 
 Specifying `--save-path` will output the transcribed MIDI file along with the piano roll images:
 
 ```bash
-python evaluate.py runs/model/model-100000.pt --save-path output/
+python evaluate.py <path/to/your/saved/model> --save-path output/
 ```
 
 In order to test on the Maestro dataset's test split instead of the MAPS database, run:
 
 ```bash
-python evaluate.py runs/model/model-100000.pt Maestro test
+python evaluate.py <path/to/your/saved/model> MAESTRO test
 ```
 
-## Implementation Details
+## Citing
 
-This implementation contains a few of the additional improvements on the model that were reported in the Maestro paper, including:
-
-* Offset head
-* Increased model capacity, making it 26M parameters by default
-* Gradient stopping of inter-stack connections
-* L2 Gradient clipping of each parameter at 3
-* Using the HTK mel frequencies
-
-Meanwhile, this implementation does not include the following features:
-
-* Variable-length input sequences that slices at silence or zero crossings
-* Harmonically decaying weights on the frame loss
-
-Despite these, this implementation is able to achieve a comparable performance to what is reported on the Maestro paper as the performance without data augmentation.
-
+Please, if you use this repository or the model consider citing:
+```text
+@inproceedings{Perez2023triad,
+  author       = {Perez, Miguel and Kirchhoff, Holger and Serra, Xavier}
+  title        = {TriAD: Capturing harmonics with 3D convolutions},
+  booktitle    = {Proceedings of the 24th International Society for Music Information
+                  Retrieval Conference, {ISMIR} 2023, Milan, November 5-9, 2023},
+}
+```
 

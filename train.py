@@ -42,7 +42,7 @@ class EarlyStopper:
 @ex.config
 def config():
     logdir = 'runs/transcriber-' + datetime.now().strftime('%y%m%d-%H%M%S')
-    device = 'mps' # DEFAULT_DEVICE 
+    device = 'cpu'  # DEFAULT_DEVICE
     iterations = 500000
     resume_iteration = None
     checkpoint_interval = 1000
