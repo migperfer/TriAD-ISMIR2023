@@ -50,7 +50,7 @@ def config():
     model = "HPPNetDDD"
     preload_dataset = True
 
-    batch_size = 1
+    batch_size = 4
     sequence_length = SAMPLE_RATE*5
 
     if torch.cuda.is_available() and torch.cuda.get_device_properties(torch.cuda.current_device()).total_memory < 10e9:

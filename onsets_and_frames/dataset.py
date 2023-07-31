@@ -30,10 +30,9 @@ class PianoRollAudioDataset(Dataset):
         self.min_midi = min_midi
         self.time_resolution = pianoroll_time_resolution  # time resolution in ms
         self.onset_offset_time_tolerance = onset_offset_time_tolerance
-        hop_size, hops_in_onset, hops_in_offset = self._get_hop_sizes(self.time_resolution, self.onset_offset_time_tolerance, self.sample_rate)
-        self.hop_size = hop_size
-        self.hops_in_onset = hops_in_onset
-        self.hops_in_offset = hops_in_offset
+        self.hop_size = HOP_LENGTH
+        self.hops_in_onset = HOPS_IN_ONSET
+        self.hops_in_offset = HOPS_IN_OFFSET
 
         self.data = []
         self.input_files = []
