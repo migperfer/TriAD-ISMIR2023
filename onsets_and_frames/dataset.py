@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from os import remove as removefile
 
+from .constants import HOPS_IN_ONSET, HOPS_IN_OFFSET, HOP_LENGTH
 from .midi import parse_midi
 
 
@@ -63,15 +64,14 @@ class PianoRollAudioDataset(Dataset):
 
                 # if any of the indexes is negative, then we need to generate a new random chunk
                 if (step_begin < 0) or (step_end < 0):
-                        audio_length = len(data['audio'])
-                        step_begin = self.random.randint(audio_length - self.sequence_length) // self.hop_size
-                        n_steps = self.sequence_length // self.hop_size
-                        step_end = step_begin + n_steps
+                    audio_length = len(data['audio'])
+                    step_begin = self.random.randint(audio_length - self.sequence_length) // self.hop_size
+                    n_steps = self.sequence_length // self.hop_size
+                    step_end = step_begin + n_steps
 
-                        begin = step_begin * self.hop_size
-                        end = begin + self.sequence_length
-
-                        self.fixed_beginning_end_indexes[index] = [step_begin, step_end] # save the indexes for later
+                    begin = step_begin * self.hop_size
+                    end = begin + self.sequence_length
+                    self.fixed_beginning_end_indexes[index] = [step_begin, step_end] # save the indexes for later
                 else: # If we already have a chunk, then we just need to get the audio data
                     begin = step_begin * self.hop_size
                     end = step_end * self.hop_size
