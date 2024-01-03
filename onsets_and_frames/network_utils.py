@@ -134,10 +134,10 @@ class FGLSTM(nn.Module):
         self.linear = nn.Linear(lstm_size, channel_out)
 
     def forward(self, x):
-        # inputs: [b x c_in x T x freq]
+        # inputs: [b x c_in x freq x T]
         # outputs: [b x c_out x T x freq]
 
-        b, c_in, frames, n_freq = x.size()
+        b, c_in, n_freq, frames = x.size()
 
         # => [b x freq x T x c_in]
         x = t.permute(x, [0, 3, 2, 1])

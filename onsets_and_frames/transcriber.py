@@ -84,10 +84,10 @@ class HPPNet(nn.Module):
 
         self.dilated_convblock = dilated_convblock
 
-        self.fglstm_frames = FGLSTM(channel_in=128, channel_out=1, lstm_size=128)
-        self.fglstm_onsets = FGLSTM(channel_in=128, channel_out=1, lstm_size=128)
-        self.fglstm_offsets = FGLSTM(channel_in=128, channel_out=1, lstm_size=128)
-        self.fglstm_velocities = FGLSTM(channel_in=128, channel_out=1, lstm_size=128)
+        self.fglstm_frames = FGLSTM(channel_in=self.channel_sizes[2], channel_out=1, lstm_size=self.channel_sizes[2])
+        self.fglstm_onsets = FGLSTM(channel_in=self.channel_sizes[2], channel_out=1, lstm_size=self.channel_sizes[2])
+        self.fglstm_offsets = FGLSTM(channel_in=self.channel_sizes[2], channel_out=1, lstm_size=self.channel_sizes[2])
+        self.fglstm_velocities = FGLSTM(channel_in=self.channel_sizes[2], channel_out=1, lstm_size=self.channel_sizes[2])
 
     def obtain_cqt(self, x):
         kernel_size = self.cqt_layer.cqt_kernels_imag.shape[-1]
@@ -171,7 +171,7 @@ class HPPNetDDD(HPPNet):
 
         self.harmonic_block = nn.Sequential(
             From2Dto3D(bins_per_octave=self.bins_per_octave, n_octaves=self.num_octaves),
-            HarmConvBlock(n_in_channels=16, n_out_channels=128, octave_depth=3, dilation_rates=[4*0, 4*7, 4*4, 4*10]),
+            HarmConvBlock(n_in_channels=self.channel_sizes[0], n_out_channels=self.channel_sizes[1], octave_depth=3, dilation_rates=[4*0, 4*7, 4*4, 4*10]),
             From3Dto2D(bins_per_octave=self.bins_per_octave, n_octaves=self.num_octaves),
         )
 
