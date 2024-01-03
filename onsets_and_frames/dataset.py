@@ -3,9 +3,11 @@ import os
 from abc import abstractmethod
 from glob import glob
 
+import librosa
 import numpy as np
 import soundfile
 from torch.utils.data import Dataset
+from torch.nn.utils.rnn import pad_sequence
 import torch
 from tqdm import tqdm
 
@@ -150,8 +152,10 @@ class PianoRollAudioDataset(Dataset):
             except RuntimeError:
                 removefile(saved_data_path)
 
-        audio, sr = soundfile.read(audio_path, dtype='int16')
-        assert sr == self.sample_rate
+        audio, sr = soundfile.read(audio_path)
+        audio = librosa.to_mono(audio.T)
+        if sr != self.sample_rate:
+            audio = librosa.resample(audio, orig_sr=sr, target_sr=self.sample_rate, res_type='kaiser_fast')
 
         audio = torch.ShortTensor(audio)
         audio_length = len(audio)
@@ -210,7 +214,7 @@ class MAESTRO(PianoRollAudioDataset):
             splits = [row for row in metadata["split"].values()]
             files = list(zip(audios, midifiles, splits))
             files = filter(lambda x: x[2] == group, files)
-            files = [(audio if os.path.exists(audio) else audio.replace(".flac", ".wac"), midi) for audio, midi, _ in files]
+            files = [(audio if os.path.exists(audio) else audio.replace(".flac", ".wav"), midi) for audio, midi, _ in files]
 
         result = []
         for audio_path, midi_path in files:
@@ -238,3 +242,24 @@ class MAPS(PianoRollAudioDataset):
         assert(all(os.path.isfile(tsv) for tsv in tsvs))
 
         return sorted(zip(flacs, tsvs))
+
+
+def collating_function(batch):
+    """
+    collating function for the dataloader
+
+    Parameters
+    ----------
+    batch: list
+        a list of dictionaries containing the data
+
+    Returns
+    -------
+    a dictionary containing the batched data
+    """
+    result = dict()
+    for key in batch[0].keys():
+        if key == "path":
+            continue
+        result[key] = pad_sequence([item[key] for item in batch], batch_first=True)
+    return result
