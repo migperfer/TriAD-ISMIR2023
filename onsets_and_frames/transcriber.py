@@ -110,10 +110,10 @@ class HPPNet(nn.Module):
         cqt = self.obtain_cqt(x)
         frames, onsets, offsets, velocities = self.neural_processing(cqt)
 
-        frames = t.sigmoid(frames).permute(0, -1, -2)
-        onsets = t.sigmoid(onsets).permute(0, -1, -2)
-        offsets = t.sigmoid(offsets).permute(0, -1, -2)
-        velocities = t.sigmoid(velocities).permute(0, -1, -2)
+        frames = t.sigmoid(frames)
+        onsets = t.sigmoid(onsets)
+        offsets = t.sigmoid(offsets)
+        velocities = t.sigmoid(velocities)
         return frames, onsets, offsets, velocities
 
     def run_on_batch(self, batch):
