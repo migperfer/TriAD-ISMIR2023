@@ -6,6 +6,7 @@ from glob import glob
 import librosa
 import numpy as np
 import soundfile
+import soxr
 from torch.utils.data import Dataset
 from torch.nn.utils.rnn import pad_sequence
 import torch
@@ -152,10 +153,9 @@ class PianoRollAudioDataset(Dataset):
             except RuntimeError:
                 removefile(saved_data_path)
 
-        audio, sr = soundfile.read(audio_path)
-        audio = librosa.to_mono(audio.T)
+        audio, sr = soundfile.read(audio_path, dtype='int16')
         if sr != self.sample_rate:
-            audio = librosa.resample(audio, orig_sr=sr, target_sr=self.sample_rate, res_type='kaiser_fast')
+            audio = soxr.resample(audio, sr, self.sample_rate)
 
         audio = torch.ShortTensor(audio)
         audio_length = len(audio)
