@@ -66,14 +66,24 @@ class HarmConvBlock(nn.Module):
     def forward_2d(self, x):
         batch, channels, octaves, pitch_classes, frames = x.size()
         x = x.permute([0, 4, 1, 2, 3]).reshape([batch * frames, channels, octaves, pitch_classes])  # Stack frames at batch dimension
-        outputs = [module(x) for module in self.module_list]
-        outputs = t.stack(outputs).sum(0)
-        outputs = outputs.reshape([batch, frames, self.n_out_channels, octaves, pitch_classes]).permute([0, 2, 3, 4, 1])  # Return to the original shape
+        outputs = None
+        for module in self.module_list:
+            if outputs is None:
+                outputs = module(x)
+            else:
+                outputs += module(x)
+        # Return to the original shape
+        outputs = outputs.reshape([batch, frames, self.n_out_channels, octaves, pitch_classes]).permute([0, 2, 3, 4, 1])
         return outputs
     
     def forward_3d(self, x):
-        outputs = [module(x) for module in self.module_list]
-        return t.stack(outputs).sum(0)
+        outputs = None
+        for module in self.module_list:
+            if outputs is None:
+                outputs = module(x)
+            else:
+                outputs += module(x)
+        return outputs
 
     def forward(self, x):
         if self.using_3d_convolutions:

@@ -15,8 +15,6 @@ from evaluate import evaluate
 from onsets_and_frames import *
 import onsets_and_frames.transcriber as nnmodels
 
-from onsets_and_frames.dataset import collating_function
-
 ex = Experiment('train_transcriber')
 
 
@@ -95,13 +93,13 @@ def train(logdir, device, iterations, resume_iteration, checkpoint_interval, tra
         validation_groups = [str(leave_one_out)]
 
     if train_on == 'MAESTRO':
-        dataset = MAESTRO(groups=train_groups, sequence_length=sequence_length, device=device, preload=preload_dataset)
-        validation_dataset = MAESTRO(groups=validation_groups, sequence_length=sequence_length, device=device, preload=preload_dataset)
+        dataset = MAESTRO(groups=train_groups, sequence_length=sequence_length, device=device)
+        validation_dataset = MAESTRO(groups=validation_groups, sequence_length=sequence_length, device=device)
     else:
-        dataset = MAPS(groups=['AkPnBcht', 'AkPnBsdf', 'AkPnCGdD', 'AkPnStgb', 'SptkBGAm', 'SptkBGCl', 'StbgTGd2'], sequence_length=sequence_length, device=device, preload=preload_dataset)
-        validation_dataset = MAPS(groups=['ENSTDkAm', 'ENSTDkCl'], sequence_length=validation_length, device=device, preload=preload_dataset)
+        dataset = MAPS(groups=['AkPnBcht', 'AkPnBsdf', 'AkPnCGdD', 'AkPnStgb', 'SptkBGAm', 'SptkBGCl', 'StbgTGd2'], sequence_length=sequence_length, device=device)
+        validation_dataset = MAPS(groups=['ENSTDkAm', 'ENSTDkCl'], sequence_length=validation_length, device=device)
 
-    loader = DataLoader(dataset, batch_size, shuffle=True, drop_last=True, collate_fn=collating_function, num_workers=4)
+    loader = DataLoader(dataset, batch_size, shuffle=True, drop_last=True, num_workers=4)
 
     if resume_iteration is None:
         model = getattr(nnmodels, model)(n_dilated_conv_layers=n_dilated_conv_layers, convblock_length=convblock_length, add_dilated_convblock=add_dilated_convblock).to(device)
